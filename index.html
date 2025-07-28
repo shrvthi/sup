@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chittiluuu Quest</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to top right, #ffe4ec, #ffd6e0);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #quest-container, #message-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 2rem;
+      color: #d63384;
+    }
+
+    #startBtn {
+      display: block;
+      margin: 30px auto;
+      padding: 15px 30px;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .balloon {
+      width: 50px;
+      height: 70px;
+      background: radial-gradient(circle at 30% 30%, #ff6699, #cc0066);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      position: absolute;
+      cursor: pointer;
+      animation: floatUp 12s linear forwards;
+    }
+
+    @keyframes floatUp {
+      to {
+        transform: translateY(-120vh);
+        opacity: 0;
+      }
+    }
+
+    #message-text {
+      font-size: 3rem;
+      color: #ff3366;
+      font-weight: bold;
+      text-shadow: 1px 1px #fff;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .heart, .kiss {
+      position: absolute;
+      font-size: 3rem;
+      animation: floatEmoji 4s ease-in-out infinite;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .heart {
+      color: red;
+    }
+
+    .kiss {
+      color: pink;
+    }
+
+    @keyframes floatEmoji {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="quest-container">
+    <h1>Pop the balloons to see the message</h1>
+    <button id="startBtn">Start Quest 🎈</button>
+  </div>
+
+  <div id="message-container" style="display:none;">
+    <div id="message-text">I know that you're flying rn but,i miss you chittiluuu 😭😭🥺🥺 can't wait to see you🥲</div>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const questContainer = document.getElementById('quest-container');
+    const messageContainer = document.getElementById('message-container');
+
+    let popped = 0;
+    let balloonsCreated = 0;
+    let balloonInterval;
+
+    function createBalloon() {
+      const balloon = document.createElement('div');
+      balloon.classList.add('balloon');
+      balloon.style.left = Math.random() * 90 + 'vw';
+      balloon.style.bottom = '0px';
+      questContainer.appendChild(balloon);
+
+      balloon.addEventListener('click', () => {
+        balloon.remove();
+        popped++;
+        if (popped >= 10) {
+          endQuest();
+        }
+      });
+
+      setTimeout(() => {
+        if (questContainer.contains(balloon)) balloon.remove();
+      }, 12000);
+    }
+
+    function startQuest() {
+      popped = 0;
+      balloonsCreated = 0;
+      balloonInterval = setInterval(() => {
+        createBalloon();
+        balloonsCreated++;
+        if (balloonsCreated >= 20) {
+          clearInterval(balloonInterval);
+        }
+      }, 800);
+
+      startBtn.disabled = true;
+    }
+
+    function endQuest() {
+      clearInterval(balloonInterval);
+
+      // Remove all balloons if any left
+      const balloons = document.querySelectorAll('.balloon');
+      balloons.forEach(b => b.remove());
+
+      // Hide quest container
+      questContainer.style.display = 'none';
+
+      // Show message container
+      messageContainer.style.display = 'flex';
+      messageContainer.style.flexDirection = 'column';
+      messageContainer.style.justifyContent = 'center';
+      messageContainer.style.alignItems = 'center';
+
+      generateHeartsAndKisses();
+    }
+
+    function generateHeartsAndKisses() {
+      for (let i = 0; i < 50; i++) {
+        const emoji = document.createElement('div');
+        emoji.classList.add(Math.random() > 0.5 ? 'heart' : 'kiss');
+        emoji.textContent = emoji.classList.contains('heart') ? '❤️' : '💋';
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.top = Math.random() * 100 + 'vh';
+        emoji.style.animationDuration = (2 + Math.random() * 3) + 's';
+        messageContainer.appendChild(emoji);
+      }
+    }
+
+    startBtn.addEventListener('click', startQuest);
+  </script>
+</body>
+</html>
